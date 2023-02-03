@@ -1,15 +1,15 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { getCookie } from "../../../shared/cookie";
-import homeIcon from "../../../asset/icon/homeIcon.svg";
-import snsIcon from "../../../asset/icon/snsIcon.svg";
-import chatIcon from "../../../asset/icon/chatIcon.svg";
-import myPageIcon from "../../../asset/icon/myPageIcon.svg";
-import clickHomeIcon from "../../../asset/icon/clickHomeIcon.svg";
-import clickSnsIcon from "../../../asset/icon/clickSnsIcon.svg";
-import clickChatIcon from "../../../asset/icon/clickChatIcon.svg";
-import clickMyPageIcon from "../../../asset/icon/clickMyPageIcon.svg";
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { getCookie } from '../../../shared/cookie';
+import homeIcon from '../../../asset/icon/homeIcon.svg';
+import snsIcon from '../../../asset/icon/snsIcon.svg';
+import chatIcon from '../../../asset/icon/chatIcon.svg';
+import myPageIcon from '../../../asset/icon/myPageIcon.svg';
+import clickHomeIcon from '../../../asset/icon/clickHomeIcon.svg';
+import clickSnsIcon from '../../../asset/icon/clickSnsIcon.svg';
+import clickChatIcon from '../../../asset/icon/clickChatIcon.svg';
+import clickMyPageIcon from '../../../asset/icon/clickMyPageIcon.svg';
 
 const IconNavigationBar = () => {
   const navigate = useNavigate();
@@ -17,17 +17,17 @@ const IconNavigationBar = () => {
   const pathName = locationName.pathname;
 
   //토큰의 유무(로그인/비로그인)에 따라 접근권한 처리해주기 위해 가져온 값
-  const authJudge = getCookie("auth");
+  const authJudge = getCookie('auth');
 
   return (
     <BottomNavigationBar>
       <div className="icon-wrapper">
-        {pathName === "/" ? (
+        {pathName === '/' ? (
           <img
             src={clickHomeIcon}
             alt=""
             onClick={() => {
-              navigate("/");
+              navigate('/');
             }}
           />
         ) : (
@@ -35,16 +35,16 @@ const IconNavigationBar = () => {
             src={homeIcon}
             alt=""
             onClick={() => {
-              navigate("/");
+              navigate('/');
             }}
           />
         )}
-        {pathName === "/postlist" ? (
+        {pathName === '/postlist' ? (
           <img
             src={clickSnsIcon}
             alt=""
             onClick={() => {
-              navigate("/postlist");
+              navigate('/postlist');
             }}
           />
         ) : (
@@ -52,26 +52,24 @@ const IconNavigationBar = () => {
             src={snsIcon}
             alt=""
             onClick={() => {
-              navigate("/postlist");
+              navigate('/postlist');
             }}
           />
         )}
-        <img
+        {/* <img
           src={chatIcon}
           alt=""
           onClick={() => {
             alert("준비중인 기능입니다.");
           }}
-        />
-        {/* {pathName === "/chat" ? (
+        /> */}
+        {pathName === '/chat' ? (
           <img
             src={clickChatIcon}
             alt=""
             onClick={() => {
-              authJudge
-                ? navigate("/chat")
-                : alert("로그인이 필요한 기능이므로 로그인페이지로 이동합니다");
-              authJudge ? navigate("/chat") : navigate("/login");
+              authJudge ? navigate('/room') : alert('로그인이 필요한 기능이므로 로그인페이지로 이동합니다');
+              authJudge ? navigate('/room') : navigate('/login');
             }}
           />
         ) : (
@@ -79,19 +77,17 @@ const IconNavigationBar = () => {
             src={chatIcon}
             alt=""
             onClick={() => {
-              authJudge
-                ? navigate("/chat")
-                : alert("로그인이 필요한 기능이므로 로그인페이지로 이동합니다");
-              authJudge ? navigate("/chat") : navigate("/login");
+              authJudge ? navigate('/room') : alert('로그인이 필요한 기능이므로 로그인페이지로 이동합니다');
+              authJudge ? navigate('/room') : navigate('/login');
             }}
           />
-        )} */}
-        {pathName === "/mypage" || pathName === "/logInRegister" ? (
+        )}
+        {pathName === '/mypage' || pathName === '/logInRegister' ? (
           <img
             src={clickMyPageIcon}
             alt=""
             onClick={() => {
-              authJudge ? navigate("/mypage") : navigate("/logInRegister");
+              authJudge ? navigate('/mypage') : navigate('/logInRegister');
             }}
           />
         ) : (
@@ -99,7 +95,7 @@ const IconNavigationBar = () => {
             src={myPageIcon}
             alt=""
             onClick={() => {
-              authJudge ? navigate("/mypage") : navigate("/logInRegister");
+              authJudge ? navigate('/mypage') : navigate('/logInRegister');
             }}
           />
         )}

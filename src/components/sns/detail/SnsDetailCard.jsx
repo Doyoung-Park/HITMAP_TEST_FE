@@ -1,23 +1,24 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import styled from "styled-components";
-import { instance } from "../../../redux/api/instance";
-import { getCookie } from "../../../shared/cookie";
-import SnsDetailCarousel from "./SnsDetailCarousel";
-import WriteCommentBar from "../../layout/bottomBar/WriteCommentBar";
-import SnsCommentList from "../comment/SnsCommentList";
-import likeIcon from "../../../asset/icon/likeIcon.svg";
-import likeActiveIcon from "../../../asset/icon/likeActiveIcon.svg";
-import commentIcon from "../../../asset/icon/commentIcon.svg";
-// import chattingIcon from "../../../asset/icon/chattingIcon.svg";
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
+import { instance } from '../../../redux/api/instance';
+import { getCookie } from '../../../shared/cookie';
+import SnsDetailCarousel from './SnsDetailCarousel';
+import WriteCommentBar from '../../layout/bottomBar/WriteCommentBar';
+import SnsCommentList from '../comment/SnsCommentList';
+import likeIcon from '../../../asset/icon/likeIcon.svg';
+import likeActiveIcon from '../../../asset/icon/likeActiveIcon.svg';
+import commentIcon from '../../../asset/icon/commentIcon.svg';
+import chattingIcon from '../../../asset/icon/chattingIcon.svg';
+import { useNavigate } from 'react-router-dom';
 
 //sns 상세카드 한 장 컴포넌트
 const SnsDetailCard = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { postId } = useParams();
 
-  const authJudge = getCookie("auth");
+  const authJudge = getCookie('auth');
 
   const queryClient = useQueryClient();
   const submitLike = useMutation({
@@ -25,7 +26,7 @@ const SnsDetailCard = () => {
       return await instance.patch(`/post/${postId}/like`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["detailPost"] });
+      queryClient.invalidateQueries({ queryKey: ['detailPost'] });
     },
   });
 
@@ -33,46 +34,39 @@ const SnsDetailCard = () => {
     return await instance.get(`/post/${postId}`);
   };
 
-  const { data, isLoading } = useQuery(["detailPost"], detailPostAPI);
+  const { data, isLoading } = useQuery(['detailPost'], detailPostAPI);
+  const user_id = data?.data.post.user_id;
+
   const detailData = data?.data.post;
   const imageSrc = detailData?.PostImage;
   if (isLoading) {
     return <h2>Loading....</h2>;
   }
   //get한 서버 데이터 중 created_at을 정해진 디자인에 쓰기 위해 시간 포맷 바꿔주는 변수
-  const timeForCard = detailData.created_at.slice(0, 16).replace(/-/gi, ".");
+  const timeForCard = detailData.created_at.slice(0, 16).replace(/-/gi, '.');
 
   // 좋아요 기능 함수
   const postLikeHandler = () => {
-    authJudge ? submitLike.mutate() : alert("로그인이 필요한 기능입니다");
+    authJudge ? submitLike.mutate() : alert('로그인이 필요한 기능입니다');
   };
 
-  //채팅아이콘 누르면 채팅페이지로 이동하는 함수
-  // const onClickChattingHandler = () => {
-  //   navigate("/chat");
-  // };
+  // 채팅아이콘 누르면 채팅페이지로 이동하는 함수
+  const onClickChattingHandler = () => {
+    navigate(`/chat/${user_id}`);
+  };
 
   return (
     <StDetailCardContainer>
       <StCardHeader>
         <div>
-          <StCardHeaderProfileImg
-            alt="프로필이미지"
-            src={detailData.user_image}
-          />
+          <StCardHeaderProfileImg alt="프로필이미지" src={detailData.user_image} />
         </div>
         <div>
           <StCardHeaderNickName>{detailData.nickname}</StCardHeaderNickName>
           <StCardHeaderCreateTime>{timeForCard}</StCardHeaderCreateTime>
         </div>
-        {/* 채팅기능 활성화되면 보여줄 아이콘
-        {authJudge ? (
-          <StChatIcon
-            alt="채팅아이콘"
-            src={chattingIcon}
-            onClick={onClickChattingHandler}
-          />
-        ) : null} */}
+        {/* 채팅기능 활성화되면 보여줄 아이콘 */}
+        {authJudge ? <StChatIcon alt="채팅아이콘" src={chattingIcon} onClick={onClickChattingHandler} /> : null}
       </StCardHeader>
       <div>
         <StCardImgBox>
@@ -88,17 +82,9 @@ const SnsDetailCard = () => {
         <StCardStatusBox>
           <StLikeStatusCount>
             {detailData.like ? (
-              <img
-                alt="좋아요 아이콘"
-                src={likeActiveIcon}
-                onClick={postLikeHandler}
-              ></img>
+              <img alt="좋아요 아이콘" src={likeActiveIcon} onClick={postLikeHandler}></img>
             ) : (
-              <img
-                alt="좋아요 아이콘"
-                src={likeIcon}
-                onClick={postLikeHandler}
-              ></img>
+              <img alt="좋아요 아이콘" src={likeIcon} onClick={postLikeHandler}></img>
             )}
 
             <span>{detailData.like_count}</span>
@@ -140,7 +126,7 @@ const StCardHeaderProfileImg = styled.img`
 `;
 
 const StCardHeaderNickName = styled.div`
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-size: 16px;
   font-weight: 700;
@@ -148,17 +134,17 @@ const StCardHeaderNickName = styled.div`
 `;
 
 const StCardHeaderCreateTime = styled.div`
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
   color: #c2c2c2;
 `;
 
-// const StChatIcon = styled.img`
-//   transform: translateX(90px);
-//   cursor: pointer;
-// `;
+const StChatIcon = styled.img`
+  transform: translateX(90px);
+  cursor: pointer;
+`;
 
 const StCardImgBox = styled.div`
   padding-bottom: 36px;
@@ -179,7 +165,7 @@ const StCarouselBox = styled.div`
 
 const StCardContent = styled.div`
   margin: 16px;
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -200,7 +186,7 @@ const StFishNameContainer = styled.div`
 `;
 
 const StFishNameLabel = styled.label`
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-weight: 700;
   font-size: 18px;
@@ -208,7 +194,7 @@ const StFishNameLabel = styled.label`
 `;
 
 const StFishName = styled.div`
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-weight: 500;
   font-size: 16px;
@@ -237,7 +223,7 @@ const StLikeStatusCount = styled.div`
   align-items: center;
   gap: 4px;
   color: #979797;
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-weight: 700;
   font-size: 18px;
@@ -256,7 +242,7 @@ const StCommentStatusCount = styled.div`
   align-items: center;
   gap: 4px;
   color: #979797;
-  font-family: "Pretendard";
+  font-family: 'Pretendard';
   font-style: normal;
   font-weight: 700;
   font-size: 18px;

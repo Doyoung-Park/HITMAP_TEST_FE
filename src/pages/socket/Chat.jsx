@@ -1,7 +1,7 @@
-import React from "react";
-import ChatListAppBar from "../../components/layout/appBar/ChatListAppBar";
-import ChatList from "../../components/socket/ChatList";
-import IconNavigationBar from "../../components/layout/navigationBar/IconNavigationBar";
+import React from 'react';
+import ChatListAppBar from '../../components/layout/appBar/ChatListAppBar';
+import ChatList from '../../components/socket/ChatList';
+import IconNavigationBar from '../../components/layout/navigationBar/IconNavigationBar';
 
 const Chat = () => {
   return (
