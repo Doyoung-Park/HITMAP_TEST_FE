@@ -6,11 +6,7 @@ import { getCookie } from '../../shared/cookie';
 import { instance } from '../../redux/api/instance';
 import { useQuery } from '@tanstack/react-query';
 
-import axios from 'axios';
-
-const ChatList = () => {
-  const [roomData, setRoomData] = useState(null);
-
+const ChatList = ({ roomData }) => {
   //토큰의 유무(로그인/비로그인)에 따라 접근권한 처리해주기 위해 가져온 값
   const authJudge = getCookie('auth');
   //유저 정보 불러오는 fetchAPI와 data
@@ -19,20 +15,6 @@ const ChatList = () => {
   };
   const { data } = useQuery(['userInfo'], userInfoAPI);
   console.log('data: ', data);
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:3065/direct/room`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log('res: ', res.data.rooms);
-        setRoomData(res.data.rooms);
-      })
-      .catch((err) => {
-        console.log('err: ', err);
-      });
-  }, []);
 
   return (
     <StChatListContainer>

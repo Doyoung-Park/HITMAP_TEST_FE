@@ -10,10 +10,11 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 
 import { io } from 'socket.io-client';
+import axios from 'axios';
 
 const ChatCard = () => {
-  const { roomId } = useParams();
-
+  const { guestId } = useParams();
+  const [prevChatData, setPrevChatData] = useState([]);
   const [chat, setChat] = useState([]);
   //토큰의 유무(로그인/비로그인)에 따라 접근권한 처리해주기 위해 가져온 값
   // const authJudge = getCookie('auth');
@@ -31,10 +32,26 @@ const ChatCard = () => {
   });
 
   useEffect(() => {
+    axios
+      .post(
+        'http://localhost:3065/direct/chat',
+        {
+          guestId: guestId,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        // console.log('res: ', res.data.data);
+        setPrevChatData(res.data.data);
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+      });
+
     socket.on('new_message', (msg) => {
       console.log('msg: ', msg);
-
-      socket.emit('join', roomId);
 
       setChat([
         ...chat,
@@ -43,7 +60,7 @@ const ChatCard = () => {
         },
       ]);
     });
-  }, [chat, socket, roomId]);
+  }, [chat]);
 
   const renderChat = () => {
     return chat.map((message, index) => {
@@ -58,12 +75,26 @@ const ChatCard = () => {
     });
   };
 
+  const renderPrevChat = () => {
+    return prevChatData.map((message, index) => {
+      console.log('message: ', message.chat);
+      return (
+        <div key={index}>
+          <h3>
+            <span>{message.chat}</span>
+          </h3>
+        </div>
+      );
+    });
+  };
+
   return (
     <>
       <p>test socket</p>
       <ChattingAppBar />
+      <div>{renderPrevChat()}</div>
       <StChattingContentContainer>{renderChat()}</StChattingContentContainer>
-      <WriteChatBar roomId={roomId} />
+      <WriteChatBar guestId={guestId} />
     </>
   );
 };
