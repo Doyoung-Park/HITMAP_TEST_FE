@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import { useParams } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
@@ -6,8 +6,13 @@ import { instance } from '../../../redux/api/instance';
 import { getCookie } from '../../../shared/cookie';
 
 import io from 'socket.io-client';
+import axios from 'axios';
 
-const WriteCommentBar = ({ roomId }) => {
+const WriteCommentBar = ({ guestId }) => {
+  console.log('guestId: ', guestId);
+  const [message, setMessage] = useState('');
+  const [roomId, setRoomId] = useState('');
+
   //토큰의 유무(로그인/비로그인)에 따라 접근권한 처리해주기 위해 가져온 값
   const authJudge = getCookie('auth');
   //유저 정보 불러오는 fetchAPI와 data
@@ -15,7 +20,8 @@ const WriteCommentBar = ({ roomId }) => {
     return authJudge ? instance.get('/me') : null;
   };
   const { data } = useQuery(['userInfo'], userInfoAPI);
-  console.log('data: ', data);
+
+  console.log('data.data.user_id: ', data?.data.user_id);
 
   const socket = io.connect('http://localhost:3065/chat', {
     withCredentials: true,
@@ -23,7 +29,14 @@ const WriteCommentBar = ({ roomId }) => {
     transports: ['websocket'],
   });
 
-  const [message, setMessage] = useState('');
+  useEffect(() => {
+    socket.on('join', (roomId) => {
+      console.log('roomId: ', roomId);
+      setRoomId(roomId);
+    });
+
+    socket.emit('join', roomId);
+  }, []);
 
   const onChangeMessageHandler = (e) => {
     e.preventDefault();
@@ -31,10 +44,31 @@ const WriteCommentBar = ({ roomId }) => {
   };
 
   const sendMessage = () => {
+    axios
+      .post(
+        'http://localhost:3065/direct/chat',
+        {
+          roomId: roomId,
+          userId: data.data.user_id, // 나의 user_id
+          userImage: data.data.profile_image,
+          userName: data.data.nickname,
+          message: message,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        console.log('res: ', res);
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+      });
+
     socket.emit('new_message', {
       roomId: roomId,
       userId: data.data.user_id, // 나의 user_id
-      guestId: roomId, // 채팅 받을 사람의 user_id
+      guestId: guestId, // 채팅 받을 사람의 user_id
       userImage: data.data.profile_image,
       userName: data.data.nickname,
       content: message,
